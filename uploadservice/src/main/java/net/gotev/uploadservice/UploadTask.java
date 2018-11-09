@@ -72,6 +72,10 @@ public abstract class UploadTask implements Runnable {
     private long notificationCreationTimeMillis;
     private static final int NOTIFICATION_BUNDLED_BASE_ID = 1000;
 
+    private static final String SUCCESS_TITLE = "Files uploaded";
+    private static final String SUCCESS_MESSAGE = "Files uploaded successfully";
+    private static final String ONGOING_TITLE = "Uploading Files";
+
 
     /**
      * Total bytes to transfer. You should initialize this value in the
@@ -551,8 +555,8 @@ public abstract class UploadTask implements Runnable {
             service.fileUploaded();
             if (service.getFilesCount() == service.getFilesUploaded()) {
                 summaryBuilder = new NotificationCompat.Builder(service, params.notificationConfig.getNotificationChannelId())
-                        .setContentTitle("Pictures Uploaded")
-                        .setContentText("Pictures uploaded successfully")
+                        .setContentTitle(SUCCESS_TITLE)
+                        .setContentText(SUCCESS_MESSAGE)
                         .setSmallIcon(statusConfig.iconResourceID)
                         .setGroup(UploadService.NAMESPACE)
                         .setSmallIcon(statusConfig.iconResourceID)
@@ -636,7 +640,7 @@ public abstract class UploadTask implements Runnable {
 
     private void createSimpleNotification(UploadNotificationStatusConfig statusConfig) {
         NotificationCompat.Builder summaryBuilder = new NotificationCompat.Builder(service, params.notificationConfig.getNotificationChannelId())
-                .setContentTitle("Uploading Files")
+                .setContentTitle(ONGOING_TITLE)
                 .setContentText("Uploading " + (service.getFilesCount() - service.getFilesUploaded()) + " files")
                 .setSmallIcon(statusConfig.iconResourceID)
                 .setOngoing(true)
