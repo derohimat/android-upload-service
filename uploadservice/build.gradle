@@ -1,6 +1,8 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'maven-publish'
 
 def siteUrl = 'https://github.com/gotev/android-upload-service'
 def gitUrl = 'https://github.com/gotev/android-upload-service.git'
@@ -12,9 +14,34 @@ version = "3.4.2"
 
 def sdkVersion = 26
 
+def libraryName = 'uploadservice'
+def packageName = 'com.tal.android.uploadservice'
+def libraryVersion = '1.0.0'
+
+String artifactory_usr = artifactoryUser()
+String artifactory_pwd = artifactoryPassword()
+
+String artifactoryUser() {
+    String sysenv_user = "${System.getenv('ARTIFACTORY_USER')}"
+    if (sysenv_user != "" && sysenv_user != null && sysenv_user != "null") {
+        return sysenv_user
+    } else if (artifactory_user != null) {
+        return artifactory_user
+    } else return ""
+}
+
+String artifactoryPassword() {
+    String sysenv_password = "${System.getenv('ARTIFACTORY_PWD')}"
+    if (sysenv_password != "" && sysenv_password != null && sysenv_password != "null") {
+        return sysenv_password
+    } else if (artifactory_password != null) {
+        return artifactory_password
+    } else return ""
+}
+
 android {
     compileSdkVersion sdkVersion
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         minSdkVersion 14
@@ -36,8 +63,8 @@ android {
 def supportLibraryVersion = "27.0.2"
 
 dependencies {
-    compile "com.android.support:appcompat-v7:${supportLibraryVersion}"
-    compile "com.android.support:support-v4:${supportLibraryVersion}"
+    implementation "com.android.support:appcompat-v7:${supportLibraryVersion}"
+    implementation "com.android.support:support-v4:${supportLibraryVersion}"
 }
 
 // add the following information to the file: local.properties situated in the parent directory of
@@ -132,4 +159,50 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 artifacts {
     archives javadocJar
     archives sourcesJar
+}
+
+android.libraryVariants.all { variant ->
+    variant.outputs.all { output ->
+        def outputFile = output
+        if (outputFile != null && outputFile.name.endsWith('.aar')) {
+            def fileName = "${libraryName}-${name}.aar"
+            output.outputFile = new File(outputFile.parent, fileName)
+        }
+    }
+}
+
+
+artifactory {
+    contextUrl = 'http://artifactory.tal-devops.com/artifactory'
+    publish {
+        repository {
+            repoKey = 'tal'
+            username = artifactory_usr
+            password = artifactory_pwd
+        }
+        defaults {
+            publications('aar')
+            publishArtifacts = true
+        }
+    }
+    resolve {
+        repository {
+            repoKey = 'tal'
+            username = artifactory_usr
+            password = artifactory_pwd
+            maven = true
+        }
+    }
+}
+
+publishing {
+    publications {
+        aar(MavenPublication) {
+            groupId packageName
+            version = libraryVersion
+            artifactId libraryName
+            // Tell maven to prepare the generated "*.aar" file for publishing
+            artifact("$buildDir/outputs/aar/${libraryName}-release.aar")
+        }
+    }
 }
