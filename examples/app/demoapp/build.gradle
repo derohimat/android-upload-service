@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.getkeepsafe.dexcount'
 
-def sdkVersion = 26
+def sdkVersion = 28
 def libraryVersion = "3.4.2"
 
 android {
     compileSdkVersion sdkVersion
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "net.gotev.uploadservicedemo"
@@ -28,35 +28,39 @@ repositories {
 }
 
 def butterKnifeVersion = "8.8.1"
-def supportVersion = "27.0.2"
-def stethoVersion = "1.4.2"
+def supportVersion = "28.0.0"
+def stethoVersion = "1.5.0"
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Debugging
-    debugCompile "com.facebook.stetho:stetho:${stethoVersion}"
-    debugCompile "com.facebook.stetho:stetho-okhttp3:${stethoVersion}"
-    releaseCompile "net.igenius:stetho-no-op:1.1"
-    compile 'com.squareup.okhttp3:logging-interceptor:3.9.1'
+    debugImplementation "com.facebook.stetho:stetho:${stethoVersion}"
+    debugImplementation "com.facebook.stetho:stetho-okhttp3:${stethoVersion}"
+    releaseImplementation "net.igenius:stetho-no-op:1.1"
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.0'
 
     // Google support libraries
-    compile "com.android.support:appcompat-v7:${supportVersion}"
-    compile "com.android.support:design:${supportVersion}"
+    implementation "com.android.support:appcompat-v7:${supportVersion}"
+    implementation "com.android.support:design:${supportVersion}"
+    implementation "com.android.support:support-media-compat:${supportVersion}"
 
     // ButterKnife
-    compile "com.jakewharton:butterknife:${butterKnifeVersion}"
+    implementation "com.jakewharton:butterknife:${butterKnifeVersion}"
     annotationProcessor "com.jakewharton:butterknife-compiler:${butterKnifeVersion}"
 
-    compile 'com.nononsenseapps:filepicker:4.0.0-beta1'
-    compile 'net.gotev:recycleradapter:1.6'
+    implementation('com.nononsenseapps:filepicker:4.2.1') {
+        exclude group: 'com.android.support', module: 'support-v4'
+    }
 
-    /*compile "net.gotev:uploadservice:${libraryVersion}"
-    compile "net.gotev:uploadservice-okhttp:${libraryVersion}"
-    compile "net.gotev:uploadservice-ftp:${libraryVersion}"*/
+    implementation 'net.gotev:recycleradapter:1.6'
+
+    /*implementation "net.gotev:uploadservice:${libraryVersion}"
+    implementation "net.gotev:uploadservice-okhttp:${libraryVersion}"
+    implementation "net.gotev:uploadservice-ftp:${libraryVersion}"*/
 
     //comment the previous lines and uncomment the next ones for development (it uses the local libs)
-    compile project(':uploadservice')
-    compile project(':uploadservice-okhttp')
-    compile project(':uploadservice-ftp')
+    implementation project(':uploadservice')
+    implementation project(':uploadservice-okhttp')
+    implementation project(':uploadservice-ftp')
 }

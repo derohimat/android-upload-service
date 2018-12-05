@@ -12,14 +12,14 @@ def projectGroup = "net.gotev"
 group = projectGroup
 version = "3.4.2"
 
-def sdkVersion = 26
+def sdkVersion = 28
 
 def libraryName = 'uploadservice-okhttp'
 def packageName = 'com.tal.android.uploadservice-okhttp'
 def libraryVersion = '1.0.0'
 
-String artifactory_usr = artifactoryUser()
-String artifactory_pwd = artifactoryPassword()
+String artifactory_usr = ""
+String artifactory_pwd = ""
 
 String artifactoryUser() {
     String sysenv_user = "${System.getenv('ARTIFACTORY_USER')}"
@@ -41,7 +41,7 @@ String artifactoryPassword() {
 
 android {
     compileSdkVersion sdkVersion
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         minSdkVersion 14
